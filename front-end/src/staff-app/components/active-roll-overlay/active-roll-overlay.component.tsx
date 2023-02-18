@@ -2,17 +2,23 @@ import React from "react"
 import styled from "styled-components"
 import Button from "@material-ui/core/Button"
 import { BorderRadius, Spacing } from "shared/styles/styles"
-import { RollStateList } from "staff-app/components/roll-state/roll-state-list.component"
+import { RollStateList } from "staff-app/components/roll-state/roll-state-list.component";
 
-export type ActiveRollAction = "filter" | "exit"
+
+export type ActiveRollAction = "filter" | "exit"| "complete"
 interface Props {
   isActive: boolean
-  onItemClick: (action: ActiveRollAction, value?: string) => void
+  onItemClick: (action: ActiveRollAction, value?: string) => void;
+  rollStatusData?:any;
 }
 
 export const ActiveRollOverlay: React.FC<Props> = (props) => {
-  const { isActive, onItemClick } = props
+  const { isActive, onItemClick, rollStatusData } = props
+  const { all, present, late, absent } = rollStatusData;
 
+  const filterRollStatus = (value: string ='') => {
+    onItemClick('filter', value)
+  }
   return (
     <S.Overlay isActive={isActive}>
       <S.Content>
@@ -20,17 +26,18 @@ export const ActiveRollOverlay: React.FC<Props> = (props) => {
         <div>
           <RollStateList
             stateList={[
-              { type: "all", count: 0 },
-              { type: "present", count: 0 },
-              { type: "late", count: 0 },
-              { type: "absent", count: 0 },
+              { type: "all", count: all },
+              { type: "present", count: present },
+              { type: "late", count: late },
+              { type: "absent", count: absent },
             ]}
+            onItemClick={filterRollStatus}
           />
           <div style={{ marginTop: Spacing.u6 }}>
             <Button color="inherit" onClick={() => onItemClick("exit")}>
               Exit
             </Button>
-            <Button color="inherit" style={{ marginLeft: Spacing.u2 }} onClick={() => onItemClick("exit")}>
+            <Button color="inherit" style={{ marginLeft: Spacing.u2 }} onClick={() => onItemClick("complete")}>
               Complete
             </Button>
           </div>
